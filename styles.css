@@ -284,4 +284,8 @@ audio::-webkit-media-controls-unmute-button {
         width: 50%;
     }
     
+    .play-button{
+        top: 45%;
+        left: 17%;
+    }
 }

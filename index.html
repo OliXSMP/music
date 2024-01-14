@@ -23,13 +23,13 @@
     </div>
 
     <div class="audio-container">
-        <button class="previous-button" onclick="playPrevious()">Previous</button>
-        <audio controls id="audioPlayer" onplay="updateNowPlaying()" onended="playNext()" loop>
+        <audio controls id="audioPlayer" onplay="updateNowPlaying()" onended="playNext()">
             Your browser does not support the audio element.
         </audio>
         <button class="shuffle-button" onclick="toggleShuffle()">Shuffle</button>
-        <button class="next-button" onclick="playNext()">Next</button>
         <button class="loop-button" onclick="toggleLoop()">Loop</button>
+        <button class="previous-button" onclick="playPrevious()">Previous</button>
+        <button class="next-button" onclick="playNext()">Next</button>
     </div>
 
     <div class="now-playing" id="nowPlaying">
@@ -49,28 +49,30 @@
         { title: 'Goofy Music', artist: 'Aaron, Mantas', image: 'goofymusic.png', source: 'goofymusic.mp3' },
         { title: 'Skibidi Toilet (Sped Up)', artist: 'Lil Big Stack', image: 'SkibidiToiletSpedUp.png', source: 'SkibidiToiletSpedUp.mp3' },
         { title: 'The Real Slim Shady', artist: 'Eminem', image: 'TheRealSlimShady.png', source: 'TheRealSlimShady.mp3' },
+        { title: 'goosebumps', artist: 'Travis Scott', image: 'sdpinterlude(Extended).png', source: 'goosebumps.mp3' },
+        { title: 'bando', artist: 'Playboi Carti', image: 'bando.png', source: 'bando.mp3' },
+        { title: 'listen!', artist: 'hako', image: 'listen!.png', source: 'listen!.mp3' },
+        { title: 'fukumean', artist: 'Gunna', image: 'fukumean.png', source: 'fukumean.mp3' },
+        { title: 'Swimming Pools', artist: 'Kendrick Lamar', image: 'SwimmingPools.png', source: 'SwimmingPools.mp3' },
         // Add more songs as needed
     ];
-
-    let filteredSongs = [...songs]; // Initialize filteredSongs with all songs
 
     const songList = document.getElementById('songList');
     const audioPlayer = document.getElementById('audioPlayer');
     const nowPlaying = document.getElementById('nowPlaying');
     const currentSong = document.getElementById('currentSong');
     const shuffleButton = document.querySelector('.shuffle-button');
-    const nextButton = document.querySelector('.next-button');
-    const previousButton = document.querySelector('.previous-button');
     const loopButton = document.querySelector('.loop-button');
+    const previousButton = document.querySelector('.previous-button');
+    const nextButton = document.querySelector('.next-button');
     let currentSongIndex = 0;
     let isShuffleMode = false;
     let isLoopMode = false;
     let shuffledIndexes = [];
 
     // Function to display a list of songs
-    function displaySongs(songsToDisplay) {
-        songList.innerHTML = ''; // Clear the song list
-        songsToDisplay.forEach((song, index) => {
+    function displaySongs() {
+        songs.forEach((song, index) => {
             const songItem = document.createElement('div');
             songItem.classList.add('song-item');
             songItem.innerHTML = `
@@ -90,11 +92,7 @@
 
     // Function to play a specific song
     function playSong(index) {
-        // Find the index in the original list based on the filtered list
-        const originalIndex = songs.findIndex(song => song === filteredSongs[index]);
-
-        // Set the current song index and play the song
-        currentSongIndex = originalIndex;
+        currentSongIndex = index;
         audioPlayer.src = songs[currentSongIndex].source;
         audioPlayer.play();
         updateNowPlaying();
@@ -183,24 +181,41 @@
     // Function to toggle loop mode
     function toggleLoop() {
         isLoopMode = !isLoopMode;
-        audioPlayer.loop = isLoopMode;
         loopButton.classList.toggle('active', isLoopMode);
+        audioPlayer.loop = isLoopMode;
     }
 
     // Function to filter and display songs based on the search query
     function searchSongs() {
         const searchInput = document.getElementById('searchInput').value.toLowerCase();
-        filteredSongs = songs.filter(song =>
+        const filteredSongs = songs.filter(song =>
             song.title.toLowerCase().includes(searchInput) || song.artist.toLowerCase().includes(searchInput)
         );
 
+        // Clear existing songs
+        songList.innerHTML = '';
+
         // Display the filtered songs
-        displaySongs(filteredSongs);
+        filteredSongs.forEach((song, index) => {
+            const songItem = document.createElement('div');
+            songItem.classList.add('song-item');
+            songItem.innerHTML = `
+                <div class="song-info">
+                    <div class="song-image-container">
+                        <img src="${song.image}" alt="${song.title} Cover" class="song-image">
+                        <button class="play-button" onclick="playSong(${index})">&#9654;</button>
+                    </div>
+                    <div class="song-details">
+                        <span class="song-title">${song.title}</span>
+                        <span class="song-artist">${song.artist}</span>
+                    </div>
+                </div>`;
+            songList.appendChild(songItem);
+        });
     }
 
     // Initial display of songs
-    displaySongs(songs);
-
+    displaySongs();
 </script>
 
 </body>
